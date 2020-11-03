@@ -66,6 +66,7 @@ static void serdes_conf_copy0 (serdes_conf_t *dst, const serdes_conf_t *src) {
         if (src->schema_registry_urls.str)
                 url_list_parse(&dst->schema_registry_urls,
                                src->schema_registry_urls.str);
+        dst->schema_registry_urls.tls_config = src->schema_registry_urls.tls_config;
         dst->serializer_framing   = src->serializer_framing;
         dst->deserializer_framing = src->deserializer_framing;
         dst->debug   = src->debug;
@@ -94,6 +95,19 @@ serdes_err_t serdes_conf_set (serdes_conf_t *sconf,
                                  "Invalid value for %s", name);
                         return SERDES_ERR_CONF_INVALID;
                 }
+
+        } else if (!strcmp(name, "ssl.key.password") ||
+                   !strcmp(name, "ssl.key.filename") ||
+                   !strcmp(name, "ssl.cert.filename")) {
+                if (!sconf->schema_registry_urls.tls_config) {
+                        sconf->schema_registry_urls.tls_config = malloc(sizeof(tls_config_t));
+                }
+                if (!strcmp(name, "ssl.key.password"))
+                        sconf->schema_registry_urls.tls_config->passwd = strdup(val);
+                if (!strcmp(name, "ssl.key.filename"))
+                        sconf->schema_registry_urls.tls_config->key = strdup(val);
+                if (!strcmp(name, "ssl.cert.filename"))
+                        sconf->schema_registry_urls.tls_config->cert = strdup(val);
 
         } else if (!strcmp(name, "serializer.framing") ||
                    !strcmp(name, "deserializer.framing")) {
