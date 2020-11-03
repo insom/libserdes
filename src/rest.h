@@ -26,14 +26,24 @@ typedef enum {
 
 
 /**
+ * TLS configuration
+ */
+typedef struct tls_config_s {
+        char *key;
+        char *cert;
+        char *passwd;
+} tls_config_t;
+
+/**
  * List of URLs with built-in round-robin.
  */
 typedef struct url_list_s {
-        char **urls;          /* URLs */
-        int    cnt;           /* Number of URLs in 'urls' */
-        int    idx;           /* Next URL to try */
-        char  *str;           /* Original string (copy) */
-        int    max_len;       /* Longest URL's length */
+        char        **urls;          /* URLs */
+        int           cnt;           /* Number of URLs in 'urls' */
+        int           idx;           /* Next URL to try */
+        char         *str;           /* Original string (copy) */
+        int           max_len;       /* Longest URL's length */
+        tls_config_t *tls_config;    /* TLS config or NULL */
 } url_list_t;
 
 

@@ -413,6 +413,12 @@ static rest_response_t *rest_req (url_list_t *ul, rest_cmd_t cmd,
         do_curl_setopt(curl, CURLOPT_USERAGENT, "libserdes");
         do_curl_setopt(curl, CURLOPT_WRITEFUNCTION, rest_curl_write_cb);
         do_curl_setopt(curl, CURLOPT_WRITEDATA, rr);
+        if (ul->tls_config) {
+                do_curl_setopt(curl, CURLOPT_SSLCERT, ul->tls_config->cert);
+                do_curl_setopt(curl, CURLOPT_SSLKEY, ul->tls_config->key);
+                if (ul->tls_config->passwd)
+                        do_curl_setopt(curl, CURLOPT_KEYPASSWD, ul->tls_config->passwd);
+        }
 
         switch (cmd)
         {
